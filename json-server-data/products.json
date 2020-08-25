@@ -1,0 +1,14 @@
+{
+  "products": [
+    {
+      "product_name": "T-shirt",
+      "id": 1,
+      "quantity": 0,
+      "category": "as",
+      "price": "50",
+      "productimage": "product3.png",
+      "manufacture": "",
+      "suplier": ""
+    }
+  ]
+}

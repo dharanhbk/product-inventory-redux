@@ -3,24 +3,46 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import editProductClickedBroadcast from '../actions/editbroadcast';
+import Axios from 'axios';
+import viewProductBroadcast from '../actions/viewproductbroadcats';
 
 class EditProduct extends React.Component {
     constructor(props){
         super(props)
         console.log(this.props.location.state.productId)
-        let prodEdit=this.props.product.filter(p=>p.id==this.props.location.state.productId)
-        console.log(prodEdit)
+        // let prodEdit=this.props.product.filter(p=>p.id==this.props.location.state.productId)
+        //console.log(prodEdit)
         this.state={
-            id:prodEdit[0].id,
-            name: prodEdit[0].name,
-            category:prodEdit[0].category,
-            price:prodEdit[0].price,
-            quantity:prodEdit[0].quantity,
-            manufacture:prodEdit[0].manufacture,
-            suplier:prodEdit[0].suplier
+            id:0,
+            name: "",
+            category:"",
+            price:0,
+            quantity:0,
+            manufacture:"",
+            suplier:"",
+            image:""
         }
     }
-    
+    componentWillMount(){
+        if(this.props.location.state !== undefined){
+            Axios.get('http://localhost:3000/products/'+this.props.location.state.productId)
+                .then(response=>{
+                    console.log(response);
+                    this.setState({
+                        name: response.data.product_name,
+                        id:response.data.id,
+                        quantity:response.data.quantity,
+                        category:response.data.category,
+                        price:response.data.price,
+                        image:response.data.productimage,
+                        manufacture:response.data.manufacture,
+                        suplier:response.data.suplier
+                    })
+                }, error=>{
+                    console.error(error);
+                })
+        }
+    }
        
     getName=(e)=>{
         console.log(e.target.value)
@@ -46,19 +68,30 @@ class EditProduct extends React.Component {
         console.log(e.target.value)
         this.setState({suplier:e.target.value})
     } 
-
+    getProducts=()=>{
+        Axios.get("http://localhost:3000/products")
+        .then(res=>{
+            this.props.viewProducts(res.data)
+        })
+    }
     catchUpdatedProduct=()=>{
         let reqBody={
+            product_name: this.state.name,
             id: this.state.id,
-            name: this.state.name,
+            quantity:this.state.quantity,
             category:this.state.category,
             price:this.state.price,
-            quantity:this.state.quantity,
+            productimage:this.state.image,
             manufacture:this.state.manufacture,
             suplier:this.state.suplier
         }
         console.log(reqBody)
-        this.props.editProductClicked(reqBody)
+        // this.props.editProductClicked(reqBody)
+        Axios.put("http://localhost:3000/products/"+this.state.id,reqBody)
+        .then(res=>{
+            this.props.editProductClicked(reqBody)
+            this.getProducts()
+        })
     }
         
     render() { 
@@ -99,7 +132,8 @@ function convertStoreToProps(store){
 function convertPropToEventAndBroadcast(dispatch){
 
     return bindActionCreators({
-        editProductClicked: editProductClickedBroadcast
+        editProductClicked: editProductClickedBroadcast,
+        viewProducts:viewProductBroadcast 
     }, dispatch)
 
 }

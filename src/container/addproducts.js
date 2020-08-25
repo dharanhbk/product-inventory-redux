@@ -4,6 +4,8 @@ import addProductBroadcast from '../actions/addproductsbroadcast';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import defaultImage from "../images/shirt1.jpg"
+import Axios from 'axios';
+import viewProductBroadcast from '../actions/viewproductbroadcats';
 
 class AddProduct extends React.Component {
 
@@ -43,11 +45,24 @@ class AddProduct extends React.Component {
         console.log(e.target.value)
         this.setState({suplier:e.target.value})
     } 
+    getProducts=()=>{
+        Axios.get("http://localhost:3000/products")
+        .then(res=>{
+            this.props.viewProducts(res.data)
+        })
+    }
+    getImage=(event)=>{
+
+        console.log(event.target.value);
+        console.log(event.target.value.substr(12));
+        this.setState({image: event.target.value.substr(12)})
+
+    }
     captureProduct=(e)=>{
-        e.preventDefault()
+        
         let product = {
-            name:this.state.name,
-            image:defaultImage,
+            product_name:this.state.name,
+            productimage:this.state.image,
             category:this.state.category,
             manufacture:this.state.manufacture,
             price:this.state.price,
@@ -55,7 +70,11 @@ class AddProduct extends React.Component {
             suplier:this.state.suplier
         }
         console.log(product)
-        this.props.sendNewProduct(product)
+        Axios.post("http://localhost:3000/products",product)
+        .then(res=>{
+            this.props.sendNewProduct(product)
+            this.getProducts()
+        })
     }
 
     render() { 
@@ -76,6 +95,7 @@ class AddProduct extends React.Component {
                          <input type="text" placeholder="product name" onChange={this.getManufacturer}></input><br></br><br></br>
                          <label>Suplier:</label>
                          <input type="text" placeholder="product name" onChange={this.getSuplier}></input><br></br><br></br>
+                         <label>Image: </label><input type="file" onChange={this.getImage} multiple accept='image/*' /><br></br><br></br>
                          <button onClick={this.captureProduct}><Link to="/">Submit</Link></button>
                      </fieldset>
                  </form>  
@@ -86,7 +106,8 @@ class AddProduct extends React.Component {
 function convertPropToEventAndBroadcast(dispatch){
 
     return bindActionCreators({
-        sendNewProduct: addProductBroadcast 
+        sendNewProduct: addProductBroadcast,
+        viewProducts:viewProductBroadcast, 
     }, dispatch)
 
 }

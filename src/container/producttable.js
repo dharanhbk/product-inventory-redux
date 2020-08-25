@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-import deleteProductBroadcast from '../actions/deleteproductbroadcast';
 import searchProductBroadcast from '../actions/seacrhbroadcast';
 import '../container/styles.css'
 import { withRouter, Link } from 'react-router-dom';
+import Axios from 'axios';
+import viewProductBroadcast from '../actions/viewproductbroadcats';
 
 
 
@@ -14,34 +15,43 @@ class ProductTable extends React.Component {
     constructor(props){
         super(props)
         this.state={
-            productsSearch:this.props.products,
-            
+            productsSearch:this.props.products
         }
     }
     
 
     componentWillMount(){
-    this.setState({productsSearch:this.props.products})  
+    this.getProducts()
     }
    
+getProducts=()=>{
+    Axios.get("http://localhost:3000/products")
+    .then(res=>{
+        this.setState({productsSearch:res.data})
+        this.props.viewProducts(res.data)
+    })
+}
+
     renderTable=()=>{
-        console.log("render table called")
-        console.log(this.props.products)
         return this.props.products.map(product=>{
             return(
                 <tr key={product.id} style={{padding:20}}>
-                    <td style={{padding:20}}>{product.name}</td>
-                    <td><img src={product.image} style={{width:100,height:80}}></img></td>
+                    <td style={{padding:20}}>{product.product_name}</td>
+                    <td><img src={"images/" + product.productimage} style={{width:100,height:80}}></img></td>
                     <td>{product.category}</td>
                     <td>{product.price}</td>
                     <td>{product.quantity}</td>
                     <td>{product.manufacture}</td>
                     <td>{product.suplier}</td>
                     <td><button className="editButton" onClick={()=>this.editproductWithId(product.id)}>Edit</button></td>
-                    <td><button className="deleteButton" onClick={()=>this.props.deleteProducts(product)}>Delete</button></td>
+                    <td><button className="deleteButton" onClick={()=>this.deleteProducts(product.id)}>Delete</button></td>
                 </tr>
             )
         })
+    }
+    deleteProducts=(id)=>{
+        Axios.delete("http://localhost:3000/products/"+id)
+        .then(res=> this.getProducts())
     }
 
     editproductWithId=(editId)=>{
@@ -56,16 +66,20 @@ class ProductTable extends React.Component {
         e.preventDefault()
         console.log(e.target.value)
         let searchValue = e.target.value
-        if(searchValue!==""){
-        let searchFound = this.props.products.filter(found=>{
-            return found.name.toLowerCase().match(searchValue.toLowerCase().trim()) ||
-            found.category.toLowerCase().match(searchValue.toLowerCase().trim()) ||
-            found.suplier.toLowerCase().match(searchValue.toLowerCase().trim())
-        })
-        console.log(searchFound);    
-        return this.props.searchProduct(searchFound)
-    }
-    return this.props.searchProduct([])
+        if(searchValue===''){
+           return this.getProducts()
+        }else{
+            console.log(this.state.productsSearch)
+            console.log(searchValue)
+            let searchFound = this.state.productsSearch.filter(found=>{
+                return found.product_name.toLowerCase().match(searchValue.toLowerCase().trim()) ||
+                found.category.toLowerCase().match(searchValue.toLowerCase().trim()) ||
+                found.suplier.toLowerCase().match(searchValue.toLowerCase().trim()) ||
+                found.manufacture.toLowerCase().match(searchValue.toLowerCase().trim())
+            })
+            console.log(searchFound)
+            return this.props.searchProduct(searchFound)
+        }
     }
     
     render() {
@@ -113,8 +127,8 @@ function mapStatestoProps(store){
 function convertPropToEventAndBroadcast(dispatch){
 
     return bindActionCreators({
-        deleteProducts: deleteProductBroadcast,
-        searchProduct: searchProductBroadcast
+        searchProduct: searchProductBroadcast,
+        viewProducts:viewProductBroadcast
     }, dispatch)
 
 }
