@@ -8,10 +8,15 @@ import {Switch,Route} from 'react-router-dom'
 function App() {
   return (
     <div className="App">
-      <AddProduct></AddProduct>
-      <ProductTable></ProductTable>
+      <div>
+      <h1>PRODUCT INVENTORY SYSTEM</h1>
+      </div>
+      
+     
       <Switch>
+                <Route exact path='/' component={ProductTable}></Route> 
                 <Route exact path='/editproduct' component={EditProduct}></Route> 
+                <Route exact path='/addproduct' component={AddProduct}></Route> 
       </Switch>
       {/* <EditProduct></EditProduct> */}
     </div>

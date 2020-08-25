@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import deleteProductBroadcast from '../actions/deleteproductbroadcast';
 import searchProductBroadcast from '../actions/seacrhbroadcast';
+import '../container/styles.css'
+import { withRouter, Link } from 'react-router-dom';
 
-import { withRouter } from 'react-router-dom';
 
 
 
@@ -13,8 +14,8 @@ class ProductTable extends React.Component {
     constructor(props){
         super(props)
         this.state={
-            productsSearch:[],
-            productId:[]
+            productsSearch:this.props.products,
+            
         }
     }
     
@@ -25,18 +26,19 @@ class ProductTable extends React.Component {
    
     renderTable=()=>{
         console.log("render table called")
-        console.log(this.state.productsSearch)
+        console.log(this.props.products)
         return this.props.products.map(product=>{
             return(
-                <tr key={product.id}>
-                    <td>{product.name}</td>
+                <tr key={product.id} style={{padding:20}}>
+                    <td style={{padding:20}}>{product.name}</td>
+                    <td><img src={product.image} style={{width:100,height:80}}></img></td>
                     <td>{product.category}</td>
                     <td>{product.price}</td>
                     <td>{product.quantity}</td>
                     <td>{product.manufacture}</td>
                     <td>{product.suplier}</td>
-                    <td><button onClick={()=>this.editproductWithId(product.id)}>edit</button></td>
-                    <td><button onClick={()=>this.props.deleteProducts(product)}>delete</button></td>
+                    <td><button className="editButton" onClick={()=>this.editproductWithId(product.id)}>Edit</button></td>
+                    <td><button className="deleteButton" onClick={()=>this.props.deleteProducts(product)}>Delete</button></td>
                 </tr>
             )
         })
@@ -50,30 +52,38 @@ class ProductTable extends React.Component {
       })
       }
 
-    // getSearch=(e)=>{
-    //     e.preventDefault()
-    //     console.log(e.target.value)
-    //     let searchValue = e.target.value
-    //     if(searchValue!==""){
-    //     let searchFound = this.props.products.filter(found=>{
-    //         return found.name.toLowerCase().match(searchValue.toLowerCase().trim())
-    //     })
-    //     console.log(searchFound);    
-    //     return this.props.searchProduct(searchFound)
-    // }
-    // return this.props.searchProduct([])
-    // }
+    getSearch=(e)=>{
+        e.preventDefault()
+        console.log(e.target.value)
+        let searchValue = e.target.value
+        if(searchValue!==""){
+        let searchFound = this.props.products.filter(found=>{
+            return found.name.toLowerCase().match(searchValue.toLowerCase().trim()) ||
+            found.category.toLowerCase().match(searchValue.toLowerCase().trim()) ||
+            found.suplier.toLowerCase().match(searchValue.toLowerCase().trim())
+        })
+        console.log(searchFound);    
+        return this.props.searchProduct(searchFound)
+    }
+    return this.props.searchProduct([])
+    }
     
     render() {
          
         return ( 
-        <div>
-            <label>Search:</label>
-            <input type="text" onChange={(e)=>this.props.searchProduct(e.target.value)}></input>
+            <div>
+        <div className="navbar">
+            <label style={{fontSize:"20px"}}>Search:</label>
+            <input type="text" onChange={this.getSearch}></input>&nbsp;&nbsp;
+            <Link to ='/addproduct'><button className="addButton">Add product</button></Link>
+            </div>
+            <br></br>
+            <br></br>
             <table border="1px" width="100%">
                 <thead>
-                    <tr>
-                        <th>Name</th>
+                    <tr >
+                        <th style={{padding:20}}>Name</th>
+                        <th>Image</th>
                         <th>Category</th>
                         <th>Price</th>
                         <th>Quantity</th>

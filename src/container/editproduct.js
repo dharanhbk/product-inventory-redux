@@ -67,10 +67,9 @@ class EditProduct extends React.Component {
        }
 else
         return ( 
-            <div >
-                 Edit PRODUCT FORM<br></br> 
+            <div > 
                  <form> 
-                     <fieldset>
+                     <fieldset> <span style={{fontSize:30,color:"green"}}>Edit PRODUCT </span> <br></br><br></br>
                          <label>Product name:</label>
                          <input type="text" placeholder="product name" value={this.state.name} onChange={this.getName}></input><br></br><br></br>
                          <label>Category:</label>
@@ -83,7 +82,7 @@ else
                          <input type="text" placeholder="product name" value={this.state.manufacture} onChange={this.getManufacturer}></input><br></br><br></br>
                          <label>Suplier:</label>
                          <input type="text" placeholder="product name" value={this.state.suplier} onChange={this.getSuplier}></input><br></br><br></br>
-                         <Link to="/"><button onClick={this.catchUpdatedProduct}>Submit</button></Link>
+                         <Link to="/"><button className="addButton" onClick={this.catchUpdatedProduct}>Submit</button></Link>
                      </fieldset>
                  </form>  
             </div> 

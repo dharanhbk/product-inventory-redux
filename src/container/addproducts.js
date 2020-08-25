@@ -2,6 +2,8 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import addProductBroadcast from '../actions/addproductsbroadcast';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import defaultImage from "../images/shirt1.jpg"
 
 class AddProduct extends React.Component {
 
@@ -45,6 +47,7 @@ class AddProduct extends React.Component {
         e.preventDefault()
         let product = {
             name:this.state.name,
+            image:defaultImage,
             category:this.state.category,
             manufacture:this.state.manufacture,
             price:this.state.price,
@@ -58,9 +61,9 @@ class AddProduct extends React.Component {
     render() { 
         return (
              <div>
-                 ADD PRODUCT FORM 
+                
                  <form>
-                     <fieldset>
+                     <fieldset> <span style={{fontSize:30,color:"green"}}>ADD PRODUCT </span> <br></br><br></br>
                          <label>Product name:</label>
                          <input type="text" placeholder="product name" onChange={this.getName}></input><br></br><br></br>
                          <label>Category:</label>
@@ -73,7 +76,7 @@ class AddProduct extends React.Component {
                          <input type="text" placeholder="product name" onChange={this.getManufacturer}></input><br></br><br></br>
                          <label>Suplier:</label>
                          <input type="text" placeholder="product name" onChange={this.getSuplier}></input><br></br><br></br>
-                         <button onClick={this.captureProduct}>Submit</button>
+                         <button onClick={this.captureProduct}><Link to="/">Submit</Link></button>
                      </fieldset>
                  </form>  
             </div> 
